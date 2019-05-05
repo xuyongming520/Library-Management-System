@@ -2,39 +2,26 @@
   <div class="dashboard-container">
 
     <el-row :gutter="40" class="panel-group">
-    <el-col :xs="16" :sm="16" :lg="8" class="card-panel-col">
+    <el-col :xs="24" :sm="24" :lg="12" class="card-panel-col">
       <div class="card-panel" @click="">
         <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="news" class-name="card-panel-icon" />
+          <svg-icon icon-class="user" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-text">
-            新闻
+            用户
         </div>
         <div class="card-panel-description">
           <span class="card-panel-num" >{{this.news}}</span>
         </div>
       </div>
     </el-col>
-    <el-col :xs="16" :sm="16" :lg="8" class="card-panel-col">
-      <div class="card-panel" @click="">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="products" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-text">
-            产品
-          </div>
-        <div class="card-panel-description">
-          <span class="card-panel-num" >{{this.pro}}</span>
-        </div>
-      </div>
-    </el-col>
-    <el-col :xs="16" :sm="16" :lg="8" class="card-panel-col">
+    <el-col :xs="24" :sm="24" :lg="12" class="card-panel-col">
       <div class="card-panel" @click="">
         <div class="card-panel-icon-wrapper icon-money">
           <svg-icon icon-class="case" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-text">
-            案例
+            图书
           </div>
         <div class="card-panel-description">
           <span class="card-panel-num" >{{this.case}}</span>
@@ -43,24 +30,22 @@
     </el-col>
   </el-row>
 
-    <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
-      <bar-chart />
-    </el-row>
+  <el-row style="background:#fff;padding:16px 16px 0;margin-bottom:32px;">
+    <bar-chart />
+  </el-row>
 
-    <el-row :gutter="80" justify="space-between" type="flex">
-      <el-col :xs="{span: 16}" :sm="{span: 16}" :md="{span: 16}" :lg="{span: 8}" :xl="{span: 8}" style="padding-right:8px">
-        <vue-calendar></vue-calendar>
-      </el-col>
-      <el-col :xs="{span: 32}" :sm="{span: 32}" :md="{span: 32}" :lg="{span: 16}" :xl="{span: 16}" >
-
-        <template>
-          <el-table
-            :data="newsInfo"
-            v-loading="loading"
-            element-loading-text="Loading"
-            fit
-            highlight-current-row
-            style="width: 100%">
+  <el-row :gutter="80" justify="space-between" type="flex">
+    <el-col :xs="{span: 16}" :sm="{span: 16}" :md="{span: 16}" :lg="{span: 8}" :xl="{span: 8}" style="padding-right:8px">
+      <vue-calendar></vue-calendar>
+    </el-col>
+  <el-col :xs="{span: 32}" :sm="{span: 32}" :md="{span: 32}" :lg="{span: 16}" :xl="{span: 16}" >
+    <template>
+      <el-table
+        :data="newsInfo"
+        element-loading-text="Loading"
+        fit
+        highlight-current-row
+        style="width: 100%">
             <el-table-column
               label="新闻"
               width="600">

@@ -59,34 +59,7 @@ export const constantRouterMap = [
         name: 'UpdateUser',
         hidden: true,
         component: () => import('@/views/userManage/update'),
-        meta: { title: '修改管理员信息' }
-      }
-    ]
-  },
-  {
-    path: '/userClassManage',
-    component: Layout,
-    redirect: '/userClassManage/index',
-    meta: { title: '用户分类', icon: 'user' },
-    children: [
-      {
-        path: 'index',
-        name: 'UserClasses',
-        component: () => import('@/views/userClassManage/index'),
-        meta: { title: '全部分类', icon: 'user' }
-      },
-      {
-        path: 'create',
-        name: 'CreateUserClass',
-        component: () => import('@/views/userClassManage/create'),
-        meta: { title: '添加分类', icon: 'edit' }
-      },
-      {
-        path: 'update/:id',
-        name: 'UpdateUserClass',
-        hidden: true,
-        component: () => import('@/views/userClassManage/update'),
-        meta: { title: '修改用户分类' }
+        meta: { title: '修改用户信息' }
       }
     ]
   },

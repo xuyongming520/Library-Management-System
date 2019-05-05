@@ -3,14 +3,15 @@
     <el-form :rules="rules" ref="form" :model="form" label-width="150px">
       <el-form-item label="图书图片" prop="image">
         <el-upload
-          :action="`${ip}/products/temp`"
+          :action="`${ip}/books/information/temp`"
           list-type="picture-card"
-          :limit="4"
-          :file-list="fileList"
+          :limit="1"
+          :before-upload="onBeforeUploadCover"
           :on-success="handleSuccess"
-          :on-remove="handleRemove"
           :on-preview="handlePictureCardPreview"
-          :on-exceed="handleExceed">
+          :on-exceed="handleExceed"
+          accept="image/jpeg,image/png"
+          :file-list="imageList">
           <i class="el-icon-plus"></i>
         </el-upload>
         <el-dialog :visible.sync="dialogVisible">
@@ -22,25 +23,24 @@
           <el-input v-model="form.name"></el-input>
         </el-form-item>
       </div>
-      <el-form-item label="图书类别" prop="classId">
-        <el-select v-model="form.classId" placeholder="请选择图书类别" style="width:320px">
-          <el-option label="硬件" value="1"></el-option>
-          <el-option label="软件" value="2"></el-option>
-        </el-select>
-      </el-form-item>
       <div style="width:400px">
-        <el-form-item label="出版社" prop="model">
-          <el-input v-model="form.model"></el-input>
+        <el-form-item label="图书类别" prop="classId">
+          <el-input v-model="form.classId"></el-input>
         </el-form-item>
       </div>
       <div style="width:400px">
-        <el-form-item label="作者" prop="company">
-          <el-input v-model="form.company"></el-input>
+        <el-form-item label="出版社" prop="publishers">
+          <el-input v-model="form.publishers"></el-input>
         </el-form-item>
       </div>
       <div style="width:400px">
-        <el-form-item label="数量" width="" prop="marketTime">
-          <el-date-picker type="date" placeholder="选择日期" v-model="form.marketTime" style="width: 100%;"></el-date-picker>
+        <el-form-item label="作者" prop="author">
+          <el-input v-model="form.author"></el-input>
+        </el-form-item>
+      </div>
+      <div style="width:400px">
+        <el-form-item label="数量" width="" prop="num">
+          <el-input v-model="form.num"></el-input>
         </el-form-item>
       </div>
       <div style="width:600px">
@@ -62,8 +62,7 @@
 </template>
 
 <script>
-import Tinymce from '@/components/Tinymce'
-import * as products from '@/api/products'
+import * as bookInfo from '@/api/booksInfo'
 import { API_IP } from '@/utils/request'
 export default {
   name: 'CreateNews',
@@ -71,107 +70,72 @@ export default {
     return {
       form: {
         name: '',
-        model: '',
         classId: '',
-        company: '岩创科技有限公司',
+        publishers: '',
+        author: '',
         shortIntroduce: '',
-        longIntroduce: '',
-        marketTime: new Date(),
-        image: '',
-        video: ''
+        image: ''
       },
       rules: {
-        name: [{ required: true, message: '请输入产品名称', trigger: 'blur' }],
-        model: [{ required: true, message: '请输入产品型号', trigger: 'blur' }],
-        classId: [{ required: true, message: '请选择产品类型', trigger: 'blur' }],
-        company: [{ required: true, message: '请输入产品生产厂家/开发公司', trigger: 'blur' }],
-        shortIntroduce: [{ required: true, message: '请输入产品简短介绍', trigger: 'blur' }],
-        longIntroduce: [{ required: true, message: '请输入产品详细介绍', trigger: 'blur' }],
-        marketTime: [{ required: true, message: '请输入产品上市时间', trigger: 'blur' }],
+        name: [{ required: true, message: '请输入图书名称', trigger: 'blur' }],
+        classId: [{ required: true, message: '请选择图书类别', trigger: 'blur' }],
+        publishers: [{ required: true, message: '请输入图书出版社', trigger: 'blur' }],
+        shortIntroduce: [{ required: true, message: '请输入图书简短介绍', trigger: 'blur' }],
+        author: [{ required: true, message: '请输入作者', trigger: 'blur' }],
         image: [{ required: true, message: '请上传产品图片', trigger: 'blur' }]
       },
+      booksClasses: [
+        { key: 0, display_name: '全部' },
+        { key: 1, display_name: '硬件' },
+        { key: 2, display_name: '软件' }
+      ],
       fileList: [],
-      imageList: {},
+      imageList: [],
       dialogImageUrl: '',
       dialogVisible: false,
       ip: API_IP
     }
   },
-  components: {
-    Tinymce
-  },
   methods: {
     handleExceed() {
       this.$message({
         type: 'warning',
-        message: '只支持4张图片!'
+        message: '只支持1张图片!'
       })
     },
-    handleExceedVideo() {
-      this.$message({
-        type: 'warning',
-        message: '只支持1段视频!'
-      })
-    },
-    onBeforeUploadVideo(file) {
-      const isIMAGE = (file.type === ('video/mp4'))
-      const isLt100M = file.size / 1024 / 1024 / 100 <= 5
+    onBeforeUploadCover(file) {
+      const isIMAGE = (file.type === ('image/jpeg' || 'image/png' || 'image/jpg'))
       if (!isIMAGE) {
-        this.$message.error('上传文件只能是mp4格式!')
+        this.$message.error('上传文件只能是jpg/png格式!')
       }
-      if (!isLt100M) {
-        this.$message.error('上传文件大小不能超过 500MB!')
-      }
-      return isIMAGE && isLt100M
+      return isIMAGE
     },
     handleSuccess(response, file) {
-      const url = response.url.split('/')
-      this.imageList[file.uid] = url[url.length - 1]
-    },
-    handleSuccessVideo(response, file) {
-      console.log(response, file)
-      if (response.url != null) {
-        const url = response.url.split('/')
-        this.form.video = url[url.length - 1]
-      }
-    },
-    handleRemove(file, fileList) {
-      delete this.imageList[file.uid]
+      const url = response.data.split('/')
+      this.form.image = url[url.length - 1]
     },
     handlePictureCardPreview(file) {
       this.dialogImageUrl = file.url
       this.dialogVisible = true
     },
     onSubmit() {
-      for (const key in this.imageList) {
-        if (this.imageList.hasOwnProperty(key)) {
-          const element = this.imageList[key]
-          this.form.image += `${element} `
-        }
-      }
       this.$refs['form'].validate((valid) => {
         if (valid) {
-          this.createdProducts()
+          this.createdBookInfo()
         } else {
           return false
         }
       })
     },
-    createdProducts() {
-      this.form.image = ''
-      for (const key in this.imageList) {
-        if (this.imageList.hasOwnProperty(key)) {
-          const element = this.imageList[key]
-          this.form.image += `${element} `
-        }
-      }
-      products.insert(this.form)
+    createdBookInfo() {
+      console.log(123)
+      bookInfo.insert(this.form)
         .then((result) => {
           this.$message({
             type: 'success',
             message: '创建成功!'
           })
-          this.$router.push({ name: 'Products' })
+          this.$router.push({ name: 'BookInfos' })
         })
     }
   }

@@ -3,7 +3,7 @@ import { Message } from 'element-ui'
 import store from '../store'
 import { getToken } from '@/utils/auth'
 
-export const API_IP = 'http://localhost:8080'
+export const API_IP = 'http://192.168.10.112:8080'
 
 // 创建axios实例
 const service = axios.create({
@@ -23,7 +23,7 @@ service.interceptors.request.use(config => {
   Promise.reject(error)
 })
 
-// respone拦截器
+// response拦截器
 service.interceptors.response.use(
   response => {
     return response.data

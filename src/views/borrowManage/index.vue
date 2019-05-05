@@ -73,7 +73,7 @@
 </template>
 
 <script>
-import * as products from '@/api/products'
+import * as products from '@/api/borrows'
 
 export default {
   name: 'Products',

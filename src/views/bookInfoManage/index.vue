@@ -2,15 +2,15 @@
   <div class="app-container">
     <div class="filter-container" style="margin-bottom:20px">
       <el-input v-model="listQuery.name" placeholder="标题" style="width: 200px;" class="filter-item" clearable @keyup.enter.native="handleFilter"/>
-      <el-select v-model="listQuery.classId" placeholder="类别" clearable class="filter-item" style="width: 180px">
+      <!-- <el-select v-model="listQuery.classId" placeholder="类别" clearable class="filter-item" style="width: 180px">
         <el-option v-for="item in productsClasses" :key="item.key" :label="item.display_name" :value="item.key"/>
-      </el-select>
+      </el-select> -->
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
       <el-button class="filter-item" style="margin-left: 1px;" type="success" icon="el-icon-edit" @click="handleCreate">增加</el-button>
     </div>
 
     <el-table
-      :data="products"
+      :data="booksInfo"
       element-loading-text="Loading"
       border
       fit
@@ -20,18 +20,18 @@
           {{ scope.row.pkId }}
         </template>
       </el-table-column>
-      <el-table-column class-name="status-col" label="类别编号" width="110" align="center">
+      <el-table-column class-name="status-col" label="分类编号" width="110" align="center">
         <template slot-scope="scope">
-          <el-tag>{{ productsClasses[scope.row.classId].display_name }}</el-tag>
+          <el-tag>{{ scope.row.classId }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column class-name="status-col" label="缩略图" width="200" align="center">
         <template slot-scope="scope">
           <img
-            :src='scope.row.pathList ? scope.row.pathList[0] : null'
+            :src='scope.row.image'
             width="100px"
             height="100px"
-            @click="handlePictureCardPreview(scope.row.pathList ? scope.row.pathList[0] : null)"/>
+            @click="handlePictureCardPreview(scope.row.image)"/>
           <el-dialog :visible.sync="dialogVisible">
             <img width="100%" :src="dialogImageUrl" alt="">
           </el-dialog>
@@ -44,17 +44,17 @@
       </el-table-column>
       <el-table-column label="出版社" width="250" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.model }}</span>
+          <span>{{ scope.row.publishers }}</span>
         </template>
       </el-table-column>
       <el-table-column label="作者" width="200" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.marketTime | formatDate }}</span>
+          <span>{{ scope.row.author }}</span>
         </template>
       </el-table-column>
       <el-table-column label="数量" width="200" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.company }}</span>
+          <span>{{ scope.row.num }}</span>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" width="180" class-name="small-padding fixed-width">
@@ -83,20 +83,15 @@
 </template>
 
 <script>
-import * as products from '@/api/products'
+import * as booksInfo from '@/api/booksInfo'
 
 export default {
-  name: 'Products',
+  name: 'booksInfo',
   data() {
     return {
       loading: true,
-      products: [],
+      booksInfo: [],
       total: 0,
-      productsClasses: [
-        { key: 0, display_name: '全部' },
-        { key: 1, display_name: '硬件' },
-        { key: 2, display_name: '软件' }
-      ],
       listQuery: {
         limit: 10,
         page: 1,
@@ -113,7 +108,7 @@ export default {
       this.dialogVisible = true
     },
     handleUpdate(id) {
-      this.$router.push({ path: `/products/update/${id}` })
+      this.$router.push({ path: `/bookInfoManage/update/${id}` })
     },
     handleDelete(id) {
       this.$confirm('此操作将永久删除该产品, 是否继续?', '提示', {
@@ -121,7 +116,7 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        products.deleteById(id)
+        booksInfo.deleteById(id)
           .then((result) => {
             this.$message({
               type: 'success',
@@ -141,7 +136,7 @@ export default {
       this.getList()
     },
     handleCreate() {
-      this.$router.push({ name: 'CreateProducts' })
+      this.$router.push({ name: 'CreateBookInfo' })
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
@@ -153,10 +148,10 @@ export default {
     },
     getList() {
       this.loading = true
-      products.query(this.listQuery)
+      booksInfo.query(this.listQuery)
         .then((result) => {
           console.log(result)
-          this.products = result.data.list
+          this.booksInfo = result.data.list
           this.total = result.data.totalCount
           this.loading = false
         })
@@ -164,21 +159,9 @@ export default {
   },
   created() {
     this.getList()
-  },
-  filters: {
-    formatDate(val) {
-      const date = new Date(val)
-      const year = date.getFullYear()
-      const month = date.getMonth() > 9 ? date.getMonth() + 1 : `0${date.getMonth() + 1}`
-      const day = date.getDate() > 9 ? date.getDate() : `0${date.getDate() + 1}`
-      return `${year}-${month}-${day}`
-    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-#products{
-
-}
 </style>
