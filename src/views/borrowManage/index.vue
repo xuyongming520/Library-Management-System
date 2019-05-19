@@ -1,15 +1,12 @@
 <template>
   <div class="app-container">
     <div class="filter-container" style="margin-bottom:20px">
-      <el-input v-model="listQuery.name" placeholder="标题" style="width: 200px;" class="filter-item" clearable @keyup.enter.native="handleFilter"/>
-      <el-select v-model="listQuery.classId" placeholder="类别" clearable class="filter-item" style="width: 180px">
-        <el-option v-for="item in productsClasses" :key="item.key" :label="item.display_name" :value="item.key"/>
-      </el-select>
+      <el-input v-model="listQuery.userId" placeholder="用户编号" style="width: 200px;" class="filter-item" clearable @keyup.enter.native="handleFilter"/>
       <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">搜索</el-button>
     </div>
 
     <el-table
-      :data="products"
+      :data="borrows"
       element-loading-text="Loading"
       border
       fit
@@ -21,37 +18,42 @@
       </el-table-column>
       <el-table-column class-name="status-col" label="书名编号" width="110" align="center">
         <template slot-scope="scope">
-          <el-tag>{{ productsClasses[scope.row.classId].display_name }}</el-tag>
+          <el-tag>{{ scope.row.booksId}}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="书名称">
+      <el-table-column label="用户编号" width="120" align="center">
         <template slot-scope="scope">
-          <span class="link-type" @click="handleUpdate(scope.row.pkId)">{{ scope.row.name }}</span>
+          <span>{{ scope.row.userId }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="书名">
+        <template slot-scope="scope">
+          <span class="link-type">{{ scope.row.name }}</span>
         </template>
       </el-table-column>
       <el-table-column label="借阅时间" width="120" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.model }}</span>
+          <span>{{ scope.row.gmtCreate | formatDate}}</span>
         </template>
       </el-table-column>
       <el-table-column label="应还时间" width="120" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.marketTime | formatDate }}</span>
+          <span>{{ scope.row.gmtReturn | formatDate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="位置" width="200" align="center">
+      <el-table-column label="实际归还时间" width="120" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.company }}</span>
+          <span>{{ scope.row.actualReturn | formatDate }}</span>
         </template>
       </el-table-column>
       <el-table-column label="罚款" width="200" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.company }}</span>
+          <span>{{ scope.row.fine }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" width="200" align="center">
+      <el-table-column label="是否归还" width="200" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.company }}</span>
+          <span>{{ borrowsClasses[scope.row.isReturn].display_name }}</span>
         </template>
       </el-table-column>
     </el-table>
@@ -73,65 +75,32 @@
 </template>
 
 <script>
-import * as products from '@/api/borrows'
+import * as borrows from '@/api/borrows'
 
 export default {
-  name: 'Products',
+  name: 'Borrows',
   data() {
     return {
       loading: true,
-      products: [],
+      borrows: [],
       total: 0,
-      productsClasses: [
-        { key: 0, display_name: '全部' },
-        { key: 1, display_name: '硬件' },
-        { key: 2, display_name: '软件' }
+      borrowsClasses: [
+        { key: 0, display_name: '未归还' },
+        { key: 1, display_name: '已归还' }
       ],
       listQuery: {
         limit: 10,
-        page: 1,
-        classId: 0,
-        name: ''
+        page: 1
       },
       dialogVisible: false,
       dialogImageUrl: ''
     }
   },
   methods: {
-    handlePictureCardPreview(url) {
-      this.dialogImageUrl = url
-      this.dialogVisible = true
-    },
-    handleUpdate(id) {
-      this.$router.push({ path: `/products/update/${id}` })
-    },
-    handleDelete(id) {
-      this.$confirm('此操作将永久删除该产品, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        products.deleteById(id)
-          .then((result) => {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            })
-            this.getList()
-          })
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        })
-      })
-    },
     handleFilter() {
+      this.listQuery.userId = parseInt(this.listQuery.userId)
       this.listQuery.page = 1
       this.getList()
-    },
-    handleCreate() {
-      this.$router.push({ name: 'CreateProducts' })
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
@@ -143,12 +112,17 @@ export default {
     },
     getList() {
       this.loading = true
-      products.query(this.listQuery)
+      console.log(this.listQuery)
+      borrows.query(this.listQuery)
         .then((result) => {
           console.log(result)
-          this.products = result.data.list
-          this.total = result.data.totalCount
-          this.loading = false
+          if (result.code === 1) {
+            this.borrows = result.data.list
+            this.total = result.data.totalCount
+            this.loading = false
+          } else {
+            this.borrows = []
+          }
         })
     }
   },
@@ -168,7 +142,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#products{
 
-}
 </style>

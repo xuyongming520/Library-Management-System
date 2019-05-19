@@ -1,24 +1,14 @@
 import request from '@/utils/request'
 
-export function queryById(id) {
+export function query({ limit, page, userId }) {
+  console.log({ limit, page, userId })
   return request({
-    url: '/users',
-    method: 'get',
-    params: {
-      id
-    }
-  })
-}
-
-export function query({ limit, page, name, classId }) {
-  return request({
-    url: '/products/list',
-    method: 'get',
-    params: {
+    url: '/books/lend/record',
+    method: 'post',
+    data: {
       limit,
       page,
-      classId: classId || '0',
-      name: name.trim()
+      userId: userId || 0
     }
   })
 }
@@ -60,12 +50,12 @@ export function query({ limit, page, name, classId }) {
 //   })
 // }
 
-// export function deleteById(id) {
-//   return request({
-//     url: '/products',
-//     method: 'delete',
-//     params: {
-//       id
-//     }
-//   })
-// }
+export function deleteById(id) {
+  return request({
+    url: '/books/lend',
+    method: 'delete',
+    params: {
+      id
+    }
+  })
+}

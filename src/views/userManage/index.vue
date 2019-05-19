@@ -40,9 +40,14 @@
           <span>{{ scope.row.gmtCreate | formatDate }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="可借数量" width="180" align="center">
+      <el-table-column label="可借数量(本)" width="180" align="center">
         <template slot-scope="scope">
-          <span>{{ scope.row.num }}</span>
+          <span>{{ scope.row.authority.number }}</span>
+        </template>
+      </el-table-column>
+            <el-table-column label="可借时间(天)" width="180" align="center">
+        <template slot-scope="scope">
+          <span>{{ scope.row.authority.lendTime }}</span>
         </template>
       </el-table-column>
       <el-table-column label="余额" width="200" align="center">

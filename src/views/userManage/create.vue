@@ -23,11 +23,6 @@
         </el-form-item>
       </div>
       <div style="width:400px">
-        <el-form-item label="可借数量" prop="company" >
-          <el-input v-model="form.num " :disabled="true"></el-input>
-        </el-form-item>
-      </div>
-      <div style="width:400px">
         <el-form-item label="余额" prop="company">
           <el-input v-model="form.balance"></el-input>
         </el-form-item>
@@ -52,7 +47,8 @@ export default {
         uniqueId: '',
         classId: '',
         password: '',
-        num: 0,
+        number: 0,
+        lendtime: 0,
         balance: 0
       },
       rules: {

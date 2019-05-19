@@ -4,7 +4,7 @@
     <sidebar class="sidebar-container"></sidebar>
     <div class="main-container">
       <navbar></navbar>
-      <app-main></app-main>
+      <app-main class="appMain"></app-main>
     </div>
   </div>
 </template>
@@ -60,5 +60,15 @@ export default {
     height: 100%;
     position: absolute;
     z-index: 999;
+  }
+  .main-container{
+    height: 100%;
+    min-height: calc(100% - 50px);
+    .appMain{
+      height:calc( 100% - 50px) !important;
+      // height: 100%;
+      // height:calc(100%-50px);
+      // min-height: 831px;
+    }
   }
 </style>

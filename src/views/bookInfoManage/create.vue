@@ -84,11 +84,6 @@ export default {
         author: [{ required: true, message: '请输入作者', trigger: 'blur' }],
         image: [{ required: true, message: '请上传产品图片', trigger: 'blur' }]
       },
-      booksClasses: [
-        { key: 0, display_name: '全部' },
-        { key: 1, display_name: '硬件' },
-        { key: 2, display_name: '软件' }
-      ],
       fileList: [],
       imageList: [],
       dialogImageUrl: '',
