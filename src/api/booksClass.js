@@ -25,7 +25,7 @@ export function insert({ name }) {
 export function queryById(id) {
   console.log(479789)
   return request({
-    url: '/books/class',
+    url: '/books/class/detail',
     method: 'get',
     params: {
       id
